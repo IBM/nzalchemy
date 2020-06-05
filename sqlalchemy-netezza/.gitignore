@@ -1,0 +1,8 @@
+/.eggs/
+/.idea/
+/build/
+/dist/
+/test/__pycache__/
+/nzalchemy/__pycache__/
+/nzalchemy.egg-info/
+/venv/
