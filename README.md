@@ -23,11 +23,13 @@ IBM has provided Netezza ODBC driver that you can install into any Linux box. Go
 
 Get latest nzodbc 64bit driver linux64cli.package.tar from artifacts (http://devtools2.swg.usma.ibm.com/build/Voldemorts/dev_develop/latest/)
 
-- untar and unpack using below command :
+untar and unpack using below command :
+```	
 	$ tar -xvf linux64cli.package.tar
 	$ ./unpack npsclient.11.1.0.0.tar.gz
+```
 
-- Unpacking would create a lib64 directory under which there would be libnzodbc.so.
+Unpacking would create a lib64 directory under which there would be libnzodbc.so.
 	export LD_LIBRARY_PATH to lib64 directory
 
 For further details read here: https://www.ibm.com/support/knowledgecenter/SSULQD_7.2.1/com.ibm.nz.datacon.doc/c_datacon_configuring_odbc_unix_linux.html
