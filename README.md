@@ -30,7 +30,7 @@ untar and unpack using below command :
 ```
 
 Unpacking would create a lib64 directory under which there would be libnzodbc.so.
-	export LD_LIBRARY_PATH to lib64 directory
+Add above directory to LD_LIBRARY_PATH.
 
 For further details read here: https://www.ibm.com/support/knowledgecenter/SSULQD_7.2.1/com.ibm.nz.datacon.doc/c_datacon_configuring_odbc_unix_linux.html
 
@@ -60,6 +60,7 @@ The Netezza SQLAlchemy package can be installed from the public PyPI repository 
 **Connection Parameters**
 
 To connect to Netezza with SQLAlchemy use the following connection string:
+
 ```netezza+pyodbc:///?<ODBC connection parameters>```
 
 For example: 
@@ -72,10 +73,13 @@ engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True
 The above example calls the create_engine method with the user name testuser1, password 0123456, database testdb on Netezza Performance Server testserver1.rtp.raleigh.ibm.com.
 
 **Feature Support**
+
 SQLAlchemy ORM - Python object based automatically constructed SQL
+
 SQLAlchemy Core - schema-centric SQL Expression Language
 
 **Auto-increment Behavior**
+
 Auto-incrementing a value requires the Sequence object. Include the Sequence object in the primary key column to automatically increment the value as each new record is inserted.
 For example:
 ```
