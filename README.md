@@ -1,5 +1,5 @@
 <!-- This should be the location of the title of the repository, normally the short name -->
-# Netezza SQLAlchemy
+# A Netezza Dialect(nzalchemy) for SQLAlchemy
 
 <!-- Build Status, is a great thing to have at the top of your repository, it shows that you take your CI/CD as first class citizens -->
 <!-- [![Build Status](https://travis-ci.org/jjasghar/ibm-cloud-cli.svg?branch=master)](https://travis-ci.org/jjasghar/ibm-cloud-cli) -->
@@ -7,7 +7,7 @@
 <!-- Not always needed, but a scope helps the user understand in a short sentance like below, why this repo exists -->
 ## Scope
 
-Netezza SQLAlchemy runs on top of pyodbc(over nzodbc) as a dialect to bridge Netezza Performance Server and SQLAlchemy applications.
+nzalchemy runs on top of pyodbc(over nzodbc) as a dialect to bridge Netezza Performance Server and SQLAlchemy applications.
 
 ## Prerequisites
 
@@ -36,7 +36,7 @@ For further details read here: https://www.ibm.com/support/knowledgecenter/SSULQ
 
 **Install and configure Netezza ODBC on Windows**
 
-You can download the Netezza odbc drivers from IBM website and install it required system.
+You can download the Netezza odbc drivers from IBM website and install it on required system.
 
 Get latest nzodbc driver nzodbcsetup.exe from artifacts (http://devtools2.swg.usma.ibm.com/build/Voldemorts/dev_develop/latest/)
 

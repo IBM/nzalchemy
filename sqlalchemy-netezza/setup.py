@@ -15,7 +15,7 @@ readme = os.path.join(os.path.dirname(__file__), '..',"README.md")
 setup(
     name="nzalchemy",
     version=VERSION,
-    description="Netezza for SQLAlchemy",
+    description="Netezza Dialect for SQLAlchemy",
     long_description=open(readme).read(),
     long_description_content_type='text/markdown',
     url="https://github.com/IBM/nzalchemy",
