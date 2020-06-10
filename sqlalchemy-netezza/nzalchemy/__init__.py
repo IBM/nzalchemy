@@ -81,7 +81,7 @@ from .json import JSON
 from .json import JSONB
 '''
 
-#__version__ = "1.0"
+#__version__ = "11.1.0b1"
 _registry.register(
     "netezza.pyodbc", "nzalchemy.pyodbc", "NetezzaDialect_pyodbc"
 )
