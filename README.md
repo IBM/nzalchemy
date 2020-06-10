@@ -133,8 +133,7 @@ Quick Example
 ```
 #!/usr/bin/env python3
 from sqlalchemy import create_engine, MetaData, Table, Column, select
-import
-nzalchemy as nz
+import nzalchemy as nz
 import urllib 
 params= urllib.parse.quote_plus("DRIVER=<path-to-libnzodbc.so>;SERVER=<nz-running-server>;PORT=5480;DATABASE=<dbname>;UID=<usr>;PWD=<password>")
 engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)
@@ -163,14 +162,14 @@ print ("After Insert")
 s = select([test])
 result = conn.execute(s)
 for row in result:
-print (row)
+	print (row)
 #Update
 updt = test.update().where(test.c.id == '2').values(name='changed1')
 conn.execute(updt)
 s = select([test])
 result = conn.execute(s)
 for row in result:
-print (row)
+	print (row)
 
 #Delete Row/s
 delt = test.delete().where(test.c.name == 'changed1')
@@ -178,7 +177,7 @@ conn.execute(delt)
 s = select([test])
 result = conn.execute(s)
 for row in result:
-print (row) 
+	print (row) 
 ```
 
 [issues]: https://github.com/IBM/repo-template/issues/new

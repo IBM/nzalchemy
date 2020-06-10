@@ -9,15 +9,16 @@ v = open(
 VERSION = re.compile(r'.*__version__ = "(.*?)"', re.S).match(v.read()).group(1)
 v.close()
 
-#readme = os.path.join(os.path.dirname(__file__), "README.rst")
+readme = os.path.join(os.path.dirname(__file__), '..',"README.md")
 
 
 setup(
-    name="sqlalchemy-netezza",
+    name="nzalchemy",
     version=VERSION,
     description="Netezza for SQLAlchemy",
-#    long_description=open(readme).read(),
-    url="https://github.com/sqlalchemy/sqlalchemy-netezza",
+    long_description=open(readme).read(),
+    long_description_content_type='text/markdown',
+    url="https://github.com/IBM/nzalchemy",
     author="",
     author_email="",
     license="IBM",
@@ -32,9 +33,9 @@ setup(
     ],
     keywords="SQLAlchemy IBM nz",
     project_urls={
-        "Documentation": "https://github.com/sqlalchemy/sqlalchemy-netezza/wiki",
-        "Source": "https://github.com/sqlalchemy/sqlalchemy-netezza",
-        "Tracker": "https://github.com/sqlalchemy/sqlalchemy-netezza/issues",
+        "Documentation": "https://github.com/IBM/nzalchemy/wiki",
+        "Source": "https://github.com/IBM/nzalchemy",
+        "Tracker": "https://github.com/IBM/nzalchemy/issues",
     },
     packages=find_packages(include=["nzalchemy"]),
     include_package_data=True,
