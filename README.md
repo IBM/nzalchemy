@@ -147,10 +147,7 @@ Column('gender', nz.CHAR),
 meta.create_all(engine)
 #conn for insert and select
 conn = engine.connect()
-#Insert Method1
-#ins = test.insert().values(id='1',name='jack1', gender='M')
-#result = conn.execute(ins)
-#Insert Method2 Multiple Inserts
+#Insert 
 conn.execute(test.insert(),[
 			{'id':2,'name':'xyz','gender':'F'},
 			{'id':3,'name':'abc','gender':'M'},
@@ -164,7 +161,7 @@ result = conn.execute(s)
 for row in result:
 	print (row)
 #Update
-updt = test.update().where(test.c.id == '2').values(name='changed1')
+updt = test.update().where(test.c.id == '2').values(name='updated_name')
 conn.execute(updt)
 s = select([test])
 result = conn.execute(s)
@@ -172,7 +169,7 @@ for row in result:
 	print (row)
 
 #Delete Row/s
-delt = test.delete().where(test.c.name == 'changed1')
+delt = test.delete().where(test.c.name == 'abc')
 conn.execute(delt)
 s = select([test])
 result = conn.execute(s)
