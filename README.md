@@ -21,12 +21,12 @@ You will not be able to use pyodbc driver without installing Netezza OBDC driver
 
 IBM has provided Netezza ODBC driver that you can install into any Linux box. Go to IBM support center and download required version of ODBC driver.
 
-Get latest nzodbc 64bit driver linux64cli.package.tar from artifacts (http://devtools2.swg.usma.ibm.com/build/Voldemorts/dev_develop/latest/)
+Get latest nzodbc 64bit driver linux64cli.package.tar from (https://www.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/IBM+Cloud+Private+for+Data+System&release=IPS_11.1&platform=All&function=fixId&fixids=11.1.0.0-WS-ICPDS-IPS-fp125793)
 
 untar and unpack using below command :
 ```	
-	$ tar -xvf linux64cli.package.tar
-	$ ./unpack npsclient.11.1.0.0.tar.gz
+	$ tar -xvf ips-linuxclient-v<version>.tar.gz
+	$ ./unpack npsclient.<version>.tar.gz
 ```
 
 Unpacking would create a lib64 directory under which there would be libnzodbc.so.
@@ -38,7 +38,7 @@ For further details read here: https://www.ibm.com/support/knowledgecenter/SSULQ
 
 You can download the Netezza odbc drivers from IBM website and install it on required system.
 
-Get latest nzodbc driver nzodbcsetup.exe from artifacts (http://devtools2.swg.usma.ibm.com/build/Voldemorts/dev_develop/latest/)
+Get latest nzodbc driver nzodbcsetup.exe from (https://www.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/IBM+Cloud+Private+for+Data+System&release=IPS_11.1&platform=All&function=fixId&fixids=11.1.0.0-WS-ICPDS-IPS-fp125793)
 
 The installation program installs the Netezza ODBC libraries on your system, creates a Netezza SQL system data source entry (NZSQL) with appropriate default values, and adds the appropriate entries to the Windows registry.
 
@@ -66,11 +66,10 @@ To connect to Netezza with SQLAlchemy use the following connection string:
 For example: 
 ```
 import urllib 
-params= urllib.parse.quote_plus("DRIVER=/nzscratch/libnzodbc.so;SERVER=testserver1.rtp.raleigh.ibm.com;PORT=5480;DATABASE=testdb;UID=testuser1;PWD=0123456")
+params= urllib.parse.quote_plus("DRIVER=<path-to-libnzodbc.so>;SERVER=<nz-running-server>;PORT=5480;DATABASE=<dbname>;UID=<usr>;PWD=<password>")
 
 engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)
 ```
-The above example calls the create_engine method with the user name testuser1, password 0123456, database testdb on Netezza Performance Server testserver1.rtp.raleigh.ibm.com.
 
 **Feature Support**
 
