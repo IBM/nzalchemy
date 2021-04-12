@@ -10,8 +10,10 @@ class _netezzaNumeric_nzpy(sqltypes.Numeric):
         if self.asdecimal:
             if coltype == 701:
                 return processors.to_decimal_processor_factory( decimal.Decimal, self._effective_decimal_return_scale )
-            if coltype == 1700:
-                return sqltypes.Numeric.result_processor(self, dialect, coltype)
+            elif coltype == 1700:
+                return decimal.Decimal
+            else:
+                return 
         else:
             return processors.to_float
 
