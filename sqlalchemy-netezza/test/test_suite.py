@@ -37,11 +37,57 @@ from sqlalchemy.testing.suite import (
     TableDDLTest as _TableDDLTest,
     IntegerTest as _IntegerTest,
     ComponentReflectionTest as _ComponentReflectionTest,
+    CompositeKeyReflectionTest as _CompositeKeyReflectionTest,
     DateHistoricTest as _DateHistoricTest,
     DateTimeHistoricTest as _DateTimeHistoricTest,
     TimestampMicrosecondsTest as _TimestampMicrosecondsTest,
+    QuotedNameArgumentTest as _QuotedNameArgumentTest,
 )
 
+class QuotedNameArgumentTest(_QuotedNameArgumentTest):
+    @pytest.mark.skip()
+    def quote_fixtures(cls):
+        return
+
+    @pytest.mark.skip()
+    def quote_fixtures(cls):
+        return
+
+    @pytest.mark.skip()
+    def test_get_table_options(cls):
+        return
+
+    @pytest.mark.skip()
+    def test_get_view_definition(cls):
+        return
+
+    @pytest.mark.skip()
+    def test_get_columns(cls):
+        return
+
+    @pytest.mark.skip()
+    def test_get_pk_constraint(cls):
+        return
+
+    @pytest.mark.skip()
+    def test_get_foreign_keys(cls):
+        return
+
+    @pytest.mark.skip()
+    def test_get_indexes(cls):
+        return
+
+    @pytest.mark.skip()
+    def test_get_unique_constraints(cls):
+        return 
+
+    @pytest.mark.skip()
+    def test_get_table_comment(cls):
+        return
+
+    @pytest.mark.skip()
+    def test_get_check_constraints(cls):
+        return
 
 class DateHistoricTest(_DateHistoricTest): 
        
@@ -68,7 +114,17 @@ class DateTimeHistoricTest(_DateTimeHistoricTest):
             ),
             Column("date_data", cls.datatype),
         )    
-        
+
+class CompositeKeyReflectionTest(_CompositeKeyReflectionTest):
+
+    @pytest.mark.skip()
+    def test_fk_column_order(self):
+        return
+
+    @pytest.mark.skip()
+    def test_pk_column_order(self):
+        return
+
 class ComponentReflectionTest(_ComponentReflectionTest): 
 
     @classmethod
