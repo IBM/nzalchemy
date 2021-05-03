@@ -847,7 +847,6 @@ class NetezzaDialect(default.DefaultDialect):
 
     _isolation_lookup = set(
         [
-            "AUTOCOMMIT",
             "SERIALIZABLE",
             "READ UNCOMMITTED",
             "READ COMMITTED",

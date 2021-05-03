@@ -61,5 +61,18 @@ class NetezzaDialect_nzpy(NetezzaDialect):
         if hasattr(connection, "connection"):
             connection = connection.connection
             connection.autocommit = False
+    
+    def set_isolation_level(self, connection, level):
+        level = level.replace("_", " ")
+        # adjust for ConnectionFairy possibly being present
+        if hasattr(connection, "connection"):
+            connection = connection.connection
+
+        if level == "AUTOCOMMIT":
+            connection.autocommit = True
+        else:
+            cursor = connection.cursor()
+            cursor.execute("BEGIN")
+            cursor.close
 
 dialect = NetezzaDialect_nzpy
