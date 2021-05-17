@@ -3,7 +3,6 @@ from .base import NetezzaExecutionContext, NetezzaDialect, log
 from sqlalchemy import types as sqltypes, util
 import decimal
 from .base import DATETIME
-import pdb
 
 class _netezzaNumeric_nzpy(sqltypes.Numeric):
     def result_processor(self, dialect, coltype):
