@@ -20,9 +20,9 @@ import csv
 from sqlalchemy.orm import Session
 
 ##Engine Creation
-params = urllib.parse.quote_plus("DRIVER=/nzscratch/client/linux64/lib64/libnzodbc.so;SERVER=localhost;PORT=5480;DATABASE=DB1;UID=admin;PWD=password")
-engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)#engine = create_engine("netezza+nzpy://admin:password@localhost:5480/db1")
-#engine = create_engine("netezza+nzpy://admin:password@localhost:5480/db1")
+#params = urllib.parse.quote_plus("DRIVER=/nzscratch/client/linux64/lib64/libnzodbc.so;SERVER=localhost;PORT=5480;DATABASE=DB1;UID=admin;PWD=password")
+#engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)#engine = create_engine("netezza+nzpy://admin:password@localhost:5480/db1")
+engine = create_engine("netezza+nzpy://admin:password@localhost:5480/db1")
 
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
