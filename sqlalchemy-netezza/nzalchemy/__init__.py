@@ -82,10 +82,10 @@ from .json import JSONB
 '''
 
 #__version__ = "11.0.0"
-_registry.register(
-    "netezza.pyodbc", "nzalchemy.pyodbc", "NetezzaDialect_pyodbc"
+#_registry.register(
+    #"netezza.pyodbc", "nzalchemy.pyodbc", "NetezzaDialect_pyodbc"
     #"netezza.nzpy", "nzalchemy.nzpy", "NetezzaDialect_nzpy"
-)
+#)
 
 __all__ = (
     "BOOLEAN",

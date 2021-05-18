@@ -50,10 +50,6 @@ class QuotedNameArgumentTest(_QuotedNameArgumentTest):
         return
 
     @pytest.mark.skip()
-    def quote_fixtures(cls):
-        return
-
-    @pytest.mark.skip()
     def test_get_table_options(cls):
         return
 
