@@ -12,15 +12,12 @@ from sqlalchemy.types import REAL
 from sqlalchemy.types import SMALLINT
 from sqlalchemy.types import TEXT
 from sqlalchemy.types import VARCHAR
-#from sqlalchemy import select
 import urllib
 import datetime
 import nzalchemy as nz
 import csv
 
 ##Engine Creation
-#params = urllib.parse.quote_plus("DRIVER=/nzscratch/client/linux64/lib64/libnzodbc.so;SERVER=localhost;PORT=5480;DATABASE=DB1;UID=admin;PWD=password")
-#engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)#engine = create_engine("netezza+nzpy://admin:password@localhost:5480/db1")
 engine = create_engine("netezza+nzpy://admin:password@localhost:5480/db1")
 
 from sqlalchemy.ext.declarative import declarative_base
