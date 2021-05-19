@@ -39,11 +39,12 @@ setup(
     },
     packages=find_packages(include=["nzalchemy"]),
     include_package_data=True,
-    install_requires=["SQLAlchemy", "pyodbc>=4.0.27"],
+    install_requires=["SQLAlchemy<=1.3.24", "pyodbc>=4.0.27","nzpy"],
     zip_safe=False,
     entry_points={
         "sqlalchemy.dialects": [
             "netezza.pyodbc = nzalchemy.pyodbc:NetezzaDialect_pyodbc",
+            "netezza.nzpy = nzalchemy.nzpy:NetezzaDialect_nzpy"
         ]
     },
 )

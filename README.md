@@ -7,9 +7,9 @@
 <!-- Not always needed, but a scope helps the user understand in a short sentance like below, why this repo exists -->
 ## Scope
 
-nzalchemy runs on top of pyodbc(over nzodbc) as a dialect to bridge Netezza Performance Server and SQLAlchemy applications.
+nzalchemy runs on top of pyodbc(over nzodbc) or nzpy as a dialect to bridge Netezza Performance Server and SQLAlchemy applications.
 
-## Prerequisites
+## Prerequisites for using nzalchemy with pyodbc
 
 **Install pyodbc Python package**
 
@@ -51,6 +51,19 @@ The installation program installs the Netezza ODBC libraries on your system, cre
 
 For further details read here: https://www.ibm.com/support/knowledgecenter/SSULQD_7.2.1/com.ibm.nz.datacon.doc/c_datacon_installing_configuring_odbc_win.html
 
+## Prerequisites for using nzalchemy with nzpy
+**Install nzpy package**
+
+To install nzpy using pip type:
+```shell
+pip install nzpy
+```
+
+To install nzpy using setup.py:
+```shell
+python setup.py install
+```
+
 **Installing Netezza SQLAlchemy**
 
 The Netezza SQLAlchemy package can be installed from the public PyPI repository using pip:
@@ -59,7 +72,7 @@ The Netezza SQLAlchemy package can be installed from the public PyPI repository 
 
 **Connection Parameters**
 
-To connect to Netezza with SQLAlchemy use the following connection string:
+To connect to Netezza with SQLAlchemy using pyodbc use the following connection string:
 
 ```netezza+pyodbc:///?<ODBC connection parameters>```
 
@@ -69,6 +82,26 @@ import urllib
 params= urllib.parse.quote_plus("DRIVER=<path-to-libnzodbc.so>;SERVER=<nz-running-server>;PORT=5480;DATABASE=<dbname>;UID=<usr>;PWD=<password>")
 
 engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)
+```
+
+To connect to Netezza with SQLAlchemy using nzpy use the following connection string:
+
+```netezza+nzpy://username:password@hostname:port/databasename```
+
+For example:
+```
+engine = create_engine("netezza+nzpy://admin:password@localhost:5480/db1")
+```
+
+In order to pass any nzpy connection arguments to nzalchemy use below:
+
+```
+import nzpy
+
+def creator():
+    return nzpy.connect(user="admin", password="password",host='localhost', port=5480, database="db1", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+
+engine = create_engine("netezza+nzpy://", creator=creator)
 ```
 
 **Feature Support**
@@ -136,6 +169,8 @@ import nzalchemy as nz
 import urllib 
 params= urllib.parse.quote_plus("DRIVER=<path-to-libnzodbc.so>;SERVER=<nz-running-server>;PORT=5480;DATABASE=<dbname>;UID=<usr>;PWD=<password>")
 engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)
+#create engine using nzpy
+#engine = create_engine("netezza+nzpy://<username>:<password>@<nz-running-server>:5480/<dbname>")
 meta = MetaData()
 test = Table(
 'TEST', meta,

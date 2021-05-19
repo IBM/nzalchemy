@@ -248,13 +248,11 @@ class NCHAR(sqltypes.TypeEngine):
 
 class NVARCHAR(sqltypes.NVARCHAR):
     def __init__(self, length=None, collation=None,
-                 convert_unicode='force',
                  unicode_error=None):
         super(NVARCHAR, self).__init__(
             length,
             collation=collation,
-            convert_unicode=convert_unicode,
-            unicode_error='ignore')
+            )
 
 class FLOAT4(sqltypes.TypeEngine):
     __visit_name__ = "FLOAT4"
@@ -842,7 +840,7 @@ class NetezzaDialect(default.DefaultDialect):
             def connect(conn):
                 log.debug("-->")
                 self.set_isolation_level(conn, self.isolation_level)
-                conn.setencoding(encoding='utf-8')
+                #conn.setencoding(encoding='utf-8')
             return connect
         else:
             return None
@@ -1137,11 +1135,11 @@ class NetezzaDialect(default.DefaultDialect):
         table_oid = self.get_table_oid(
             connection, table_name, schema, info_cache=kw.get("info_cache")
         )
-        PK_SQL = "select attname from _v_relation_keydata where objid = :table_oid and contype = 'p';"
+        PK_SQL = "select attname from _v_relation_keydata where objid = :table_oid and contype = 'p'"
         t = sql.text(PK_SQL).columns(attname=sqltypes.Unicode)
         c = connection.execute(t, table_oid=table_oid)
         cols = [r[0] for r in c.fetchall()]
-        PK_CONS_SQL = "select constraintname from _v_relation_keydata where objid = :table_oid and contype = 'p';"
+        PK_CONS_SQL = "select constraintname from _v_relation_keydata where objid = :table_oid and contype = 'p'"
         t = sql.text(PK_CONS_SQL).columns(constraintname=sqltypes.Unicode)
         c = connection.execute(t, table_oid=table_oid)
         name = c.scalar()
@@ -1166,7 +1164,7 @@ class NetezzaDialect(default.DefaultDialect):
                 schema=self.denormalize_name(schema)
 
 
-        FK_SQL = "select constraintname, attname,pkschema,pkrelation,pkattname from _v_relation_keydata where objid = :table_oid and contype = 'f' and schema = :schemaname;"     
+        FK_SQL = "select constraintname, attname,pkschema,pkrelation,pkattname from _v_relation_keydata where objid = :table_oid and contype = 'f' and schema = :schemaname"     
         c = connection.execute(
             sql.text(FK_SQL
             ).columns(table_oid=sqltypes.Unicode), 
@@ -1207,7 +1205,7 @@ class NetezzaDialect(default.DefaultDialect):
         table_oid = self.get_table_oid(
             connection, table_name, schema, info_cache=kw.get("info_cache")
         )
-        UNIQUE_SQL = "select constraintname as name, attname as col_name, conseq as col_num from _v_relation_keydata where objid = :table_oid and contype = 'u' order by conseq ASC;"
+        UNIQUE_SQL = "select constraintname as name, attname as col_name, conseq as col_num from _v_relation_keydata where objid = :table_oid and contype = 'u' order by conseq ASC"
         t = sql.text(UNIQUE_SQL).columns(col_name=sqltypes.Unicode)
         c = connection.execute(t, table_oid=table_oid)
         uniques = defaultdict(lambda: defaultdict(dict))
