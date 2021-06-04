@@ -12,6 +12,7 @@ nzalchemy runs on top of pyodbc(over nzodbc) or nzpy as a dialect to bridge Nete
 ## Prerequisites for using nzalchemy with pyodbc
 
 **Install pyodbc Python package**
+Details of pyodbc pre-requisites and installation instruction can be found here: https://github.com/mkleehammer/pyodbc/wiki/Install 
 
 **Install Netezza OBDC(nzodbc) drivers**
 
