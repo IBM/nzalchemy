@@ -39,7 +39,7 @@ setup(
     },
     packages=find_packages(include=["nzalchemy"]),
     include_package_data=True,
-    install_requires=["SQLAlchemy<=1.3.24"],
+    install_requires=["SQLAlchemy<=1.3.24", "nzpy"],
     zip_safe=False,
     entry_points={
         "sqlalchemy.dialects": [
