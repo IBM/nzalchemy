@@ -16,10 +16,13 @@ from sqlalchemy.types import VARCHAR
 import urllib
 import datetime
 import nzalchemy as nz
-
-##Engine Creation
-params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
-engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)
+import nzpy
+def creator():
+    return nzpy.connect(user="admin", password="password",host='ayush-nps-server1.fyre.ibm.com', port=5480, database="dev_ayush", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator) #working
+# ##Engine Creation
+# params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
+# engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)
 
 
 from sqlalchemy.ext.declarative import declarative_base

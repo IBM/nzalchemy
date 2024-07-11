@@ -9,10 +9,13 @@ engine = create_engine("postgres+pg8000://postgres@localhost:5432/db1", echo=Tru
 
 import nzalchemy as nz
 import urllib
+import nzpy
 #params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.153;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
-params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
-print(params)
-engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+# print(params)
+# engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+def creator():
+    return nzpy.connect(user="admin", password="password",host='ayush-nps-server1.fyre.ibm.com', port=5480, database="dev_ayush", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator, echo=True) #working
 print (engine)
 
 meta = MetaData()

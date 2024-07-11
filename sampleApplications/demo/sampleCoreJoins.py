@@ -1,18 +1,23 @@
 import sys
 print ("\n--------- " + sys.argv[0] + " ---------\n")
 #!/usr/bin/env python3
-import pg8000
+# import pg8000
 from sqlalchemy import create_engine, MetaData, Table, Integer, String, Column, DateTime, ForeignKey
 from datetime import datetime
 from sqlalchemy.types import CHAR
 from sqlalchemy.types import VARCHAR
 from sqlalchemy import select
 import urllib
+import nzpy
 
-params = urllib.parse.quote_plus("DRIVER=NetezzaSQL;SERVER=longpassword1.fyre.ibm.com;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
-print(params)
+# params = urllib.parse.quote_plus("DRIVER=NetezzaSQL;SERVER=longpassword1.fyre.ibm.com;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
+# print(params)
 
-engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+# engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+def creator():
+    return nzpy.connect(user="admin", password="password",host='ayush-nps-server1.fyre.ibm.com', port=5480, database="dev_ayush", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+
+engine = create_engine("netezza+nzpy://", creator=creator, echo=True) #working
 print (engine)
 
 meta = MetaData()

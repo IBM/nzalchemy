@@ -169,10 +169,11 @@ Quick Example
 from sqlalchemy import create_engine, MetaData, Table, Column, select
 import nzalchemy as nz
 import urllib 
-params= urllib.parse.quote_plus("DRIVER=<path-to-libnzodbc.so>;SERVER=<nz-running-server>;PORT=5480;DATABASE=<dbname>;UID=<usr>;PWD=<password>")
-engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)
+#params= urllib.parse.quote_plus("DRIVER=<path-to-libnzodbc.so>;SERVER=<nz-running-server>;PORT=5480;DATABASE=<dbname>;UID=<usr>;PWD=<password>")
+#engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)
 #create engine using nzpy
-#engine = create_engine("netezza+nzpy://<username>:<password>@<nz-running-server>:5480/<dbname>")
+import nzpy
+engine = create_engine("netezza+nzpy://<username>:<password>@<nz-running-server>:5480/<dbname>")
 meta = MetaData()
 test = Table(
 'TEST', meta,
@@ -192,14 +193,14 @@ conn.execute(test.insert(),[
 		
 #Select
 print ("After Insert")
-s = select([test])
+s = select(test)
 result = conn.execute(s)
 for row in result:
 	print (row)
 #Update
 updt = test.update().where(test.c.id == '2').values(name='updated_name')
 conn.execute(updt)
-s = select([test])
+s = select(test)
 result = conn.execute(s)
 for row in result:
 	print (row)
@@ -207,7 +208,7 @@ for row in result:
 #Delete Row/s
 delt = test.delete().where(test.c.name == 'abc')
 conn.execute(delt)
-s = select([test])
+s = select(test)
 result = conn.execute(s)
 for row in result:
 	print (row) 

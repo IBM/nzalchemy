@@ -13,13 +13,17 @@ from sqlalchemy.types import CHAR
 from sqlalchemy.types import VARCHAR
 from sqlalchemy import select
 import urllib
+import nzpy
 
 
 #params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
-params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.153;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
-print(params)
+# params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.153;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
+# print(params)
 #engine = create_engine("postgres+pg8000://postgres@localhost:5432/db1", echo=True) #working
-engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+# engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+def creator():
+    return nzpy.connect(user="admin", password="password",host='ayush-nps-server1.fyre.ibm.com', port=5480, database="dev_ayush", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator, echo=True) #working
 print (engine)
 
 meta = MetaData()
@@ -47,7 +51,7 @@ conn.execute(TEST3.insert(),[
 
 #Select
 print ("After Insert")
-s = select([TEST3])
+s = select(TEST3)
 result = conn.execute(s)
 for row in result:
     print (row)
@@ -55,7 +59,7 @@ for row in result:
 #Update
 updt = TEST3.update().where(TEST3.c.id == '2').values(name='changed1')
 conn.execute(updt)
-s = select([TEST3])
+s = select(TEST3)
 result = conn.execute(s)
 for row in result:
     print (row)
@@ -63,7 +67,7 @@ for row in result:
 #Delete Row/s
 delt = TEST3.delete().where(TEST3.c.name == 'changed1')
 conn.execute(delt)
-s = select([TEST3])
+s = select(TEST3)
 result = conn.execute(s)
 for row in result:
     print (row)

@@ -4,9 +4,12 @@ print ("\n--------- " + sys.argv[0] + " ---------\n")
 from sqlalchemy import create_engine, MetaData, Table, Column, select
 import nzalchemy as nz
 import urllib
-
-params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
-engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+import nzpy
+# params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
+# engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+def creator():
+    return nzpy.connect(user="admin", password="password",host='ayush-nps-server1.fyre.ibm.com', port=5480, database="dev_ayush", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator, echo=True) #working
 print (engine)
 
 meta = MetaData()
@@ -34,7 +37,7 @@ conn.execute(test.insert(),[
 
 #Select
 print ("After Insert")
-s = select([test])
+s = select(test)
 result = conn.execute(s)
 for row in result:
     print (row)
@@ -42,7 +45,7 @@ for row in result:
 #Update
 updt = test.update().where(test.c.id == '2').values(name='changed1')
 conn.execute(updt)
-s = select([test])
+s = select(test)
 result = conn.execute(s)
 for row in result:
     print (row)
@@ -50,7 +53,7 @@ for row in result:
 #Delete Row/s
 delt = test.delete().where(test.c.name == 'changed1')
 conn.execute(delt)
-s = select([test])
+s = select(test)
 result = conn.execute(s)
 for row in result:
     print (row)
