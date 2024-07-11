@@ -1,6 +1,6 @@
 import sys
 print ("\n--------- " + sys.argv[0] + " ---------\n")
-from sqlalchemy import create_engine, MetaData, Table, Column
+from sqlalchemy import create_engine, MetaData, Table, Column, text
 '''
 import pg8000
 from sqlalchemy.dialects import postgresql as ps
@@ -9,9 +9,13 @@ engine = create_engine("postgres+pg8000://postgres@localhost:5432/db1", echo=Tru
 
 import nzalchemy as nz
 import urllib
-params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
-print(params)
-engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+import nzpy
+# params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
+# print(params)
+# engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+def creator():
+    return nzpy.connect(user="admin", password="password",host='ayush-nps-server1.fyre.ibm.com', port=5480, database="dev_ayush", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator, echo=True) #working
 print (engine)
 
 meta = MetaData()
@@ -59,7 +63,7 @@ Column("NZ_TIME",nz.TIME),
 Column("NZ_VARBINARY",nz.VARBINARY(20)),
 Column("NZ_ST_GEOMETRY",nz.ST_GEOMETRY(20)),
 
-#Column("NZ_INTERVAL", nz.INTERVAL), #Error while retriving even empty #ODBC SQL type 110 is not yet supported
+Column("NZ_INTERVAL", nz.INTERVAL), #Error while retriving even empty #ODBC SQL type 110 is not yet supported
 
 )
 meta.drop_all(engine)
@@ -68,7 +72,7 @@ meta.create_all(engine)
 conn = engine.connect()
 conn.execute(TEST.insert().values(
 NZ_BOOLEAN= 0 ,
-NZ_BOOL=  0,
+NZ_BOOL=  False,
 
 NZ_BIGINT=  10,
 NZ_INTEGER=  12,
@@ -105,9 +109,9 @@ NZ_DATETIME= '2016-11-11 03:59:08.8642',
 #NZ_TIMETZ= '12:57:42 AEST',  #Error while inserting with AEST
 NZ_TIMETZ= '12:57:42+05:30',  #Expects in +/- hh:mm format
 NZ_TIME= '12:19:23',
-NZ_VARBINARY= bytes('0x68656c6c6f','utf-8'),
-NZ_ST_GEOMETRY= bytes('0x68656c6c6f','utf-8'),
-#NZ_INTERVAL= '1y4mon3d23:34:57.232', #Doesn't allow ='1y4mon3d23h34m67s234565ms'
+NZ_VARBINARY= '68656c6c6f'.encode('utf-8'),
+NZ_ST_GEOMETRY= '68656c6c6f'.encode('utf-8'),
+NZ_INTERVAL= '1y4mon3d23:34:57.232', #Doesn't allow ='1y4mon3d23h34m67s234565ms'
 
 ))
 '''
@@ -121,7 +125,8 @@ conn = engine.connect()
 conn.execute(TEST.insert().values(
 NZ_INTERVAL='1y4mon3d23:34:57.232'))
 '''
-result = conn.execute(TEST.select())
+# result = conn.execute(TEST.select())
+result = conn.execute(text("SELECT * FROM TESTDT"))
 for row in result:
     print (row)
 

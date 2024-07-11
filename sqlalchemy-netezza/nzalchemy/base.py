@@ -40,6 +40,7 @@ from sqlalchemy import exc
 from sqlalchemy import schema
 from sqlalchemy import sql
 from sqlalchemy import util
+from sqlalchemy import text
 from sqlalchemy.engine import default
 from sqlalchemy.engine import reflection
 from sqlalchemy.sql import compiler
@@ -681,8 +682,10 @@ class NetezzaInspector(reflection.Inspector):
         ``relkind`` value of ``f``.
 
         """
-        schema = schema or self.default_schema_name
-        return self.dialect._get_foreign_table_names(self.bind, schema)
+        with self._operation_context() as conn:
+            return self.dialect._get_foreign_table_names(
+                conn, schema, info_cache=self.info_cache
+            )
 
     def get_view_names(self, schema=None, include=("plain", "materialized")):
         log.debug("-->")
@@ -885,11 +888,11 @@ class NetezzaDialect(default.DefaultDialect):
     #referenced
     def _get_default_schema_name(self, connection):
         log.debug("-->")
-        return connection.scalar("select current_schema")
+        return connection.scalar(text("select current_schema"))
 
     def _get_current_schema_name(self, connection):
         log.debug("-->")
-        return connection.scalar("select current_schema")
+        return connection.scalar(text("select current_schema"))
 
     def is_system_in_lowercase(self):
         log.debug("-->")
@@ -908,8 +911,8 @@ class NetezzaDialect(default.DefaultDialect):
         cursor = connection.execute(
             sql.text( 'select count(*) from _v_table where objid > 200000 and tablename = :name and schema = :schema'
             ).bindparams(
-                sql.bindparam( "name", util.text_type(table_name), type_ = sqltypes.Unicode ),
-                sql.bindparam( "schema", util.text_type(schema), type_ = sqltypes.Unicode )
+                sql.bindparam( "name", str(table_name), type_ = sqltypes.Unicode ),
+                sql.bindparam( "schema", str(schema), type_ = sqltypes.Unicode )
                 )
         )
         resultList = cursor.first()
@@ -932,8 +935,8 @@ class NetezzaDialect(default.DefaultDialect):
         cursor = connection.execute(
             sql.text( 'select count(*) from _v_sequence where objid > 200000 and seqname = :name and schema = :schema'
             ).bindparams(
-                sql.bindparam( "name", util.text_type(sequence_name), type_ = sqltypes.Unicode ),
-                sql.bindparam( "schema", util.text_type(schema), type_ = sqltypes.Unicode )
+                sql.bindparam( "name", str(sequence_name), type_ = sqltypes.Unicode ),
+                sql.bindparam( "schema", str(schema), type_ = sqltypes.Unicode )
                 )
         )
         resultList = cursor.first()
@@ -947,7 +950,7 @@ class NetezzaDialect(default.DefaultDialect):
     #QueryChange
     def _get_server_version_info(self, connection):
         log.debug("-->")
-        v = connection.execute("select version()").scalar()
+        v = connection.execute(text("select version()")).scalar()
         m = re.match(
             r".*(?:Release) "
             r"(\d+)\.?(\d+)?(?:\.(\d+))?(?:\.\d+)?(?:devel|beta)?",
@@ -978,8 +981,8 @@ class NetezzaDialect(default.DefaultDialect):
         cursor = connection.execute(
             sql.text( 'select objid from _v_table where objid > 200000 and tablename = :name and schema = :schema'
             ).bindparams(
-                sql.bindparam( "name", util.text_type(table_name), type_ = sqltypes.Unicode ),
-                sql.bindparam( "schema", util.text_type(schema), type_ = sqltypes.Unicode )
+                sql.bindparam( "name", str(table_name), type_ = sqltypes.Unicode ),
+                sql.bindparam( "schema", str(schema), type_ = sqltypes.Unicode )
                 )
         )        
         table_oid = cursor.scalar()
@@ -987,8 +990,8 @@ class NetezzaDialect(default.DefaultDialect):
             cursor = connection.execute(
                 sql.text( 'select objid from _v_object_data where objid > 200000 and objname = :name and schema = :schema'
                 ).bindparams(
-                    sql.bindparam( "name", util.text_type(table_name), type_ = sqltypes.Unicode ),
-                    sql.bindparam( "schema", util.text_type(schema), type_ = sqltypes.Unicode )
+                    sql.bindparam( "name", str(table_name), type_ = sqltypes.Unicode ),
+                    sql.bindparam( "schema", str(schema), type_ = sqltypes.Unicode )
                 )
             )
             table_oid = cursor.scalar()
@@ -1017,7 +1020,7 @@ class NetezzaDialect(default.DefaultDialect):
         result = connection.execute(
             sql.text( 'select tablename as name from _v_table where objid > 200000 and schema = :schema'
             ).bindparams(
-                sql.bindparam( "schema", util.text_type(schema), type_ = sqltypes.Unicode )
+                sql.bindparam( "schema", str(schema), type_ = sqltypes.Unicode )
                 )
         )
         table_names = [r[0] for r in result]
@@ -1034,7 +1037,7 @@ class NetezzaDialect(default.DefaultDialect):
         result = connection.execute(
             sql.text( "select tablename as name from _v_table where objid > 200000 and schema = :schema and relkind = 'f' "
             ).bindparams(
-                sql.bindparam( "schema", util.text_type(schema), type_ = sqltypes.Unicode )
+                sql.bindparam( "schema", str(schema), type_ = sqltypes.Unicode )
                 )
         )
         table_names = [r[0] for r in result]
@@ -1048,7 +1051,7 @@ class NetezzaDialect(default.DefaultDialect):
         result = connection.execute(
             sql.text( "select tablename as name from _v_table where objid > 200000 and objtype = :literal "
             ).bindparams(
-                sql.bindparam( "literal", util.text_type(literal), type_ = sqltypes.Unicode )
+                sql.bindparam( "literal", str(literal), type_ = sqltypes.Unicode )
                 )
         )
         temp_table = [row[0] for row in result]
