@@ -1,11 +1,3 @@
-# sqlalchemy/processors.py
-# Copyright (C) 2010-2021 the SQLAlchemy authors and contributors
-# <see AUTHORS file>
-# Copyright (C) 2010 Gaetan de Menten gdementen@gmail.com
-#
-# This module is part of SQLAlchemy and is released under
-# the MIT License: http://www.opensource.org/licenses/mit-license.php
-
 """defines generic type conversion functions, as used in bind and result
 processors.
 
