@@ -5,7 +5,6 @@ python3 testSelUpDel.py
 python3 testSelUpDelF.py
 python3 testDataTypes.py
 python3 testDataTypesSystem.py
-# Test the testCTA.py for corrections
 # python3 testCTA.py
 python3 testSelect.py
 python3 testSequence.py
