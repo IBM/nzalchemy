@@ -1,11 +1,9 @@
+import os
 import sys
 import urllib
 import datetime
 import nzalchemy as nz
 import nzpy
-
-print ("\n--------- " + sys.argv[0] + " ---------\n")
-
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, DateTime, select, desc, ForeignKey
 from sqlalchemy.types import BIGINT
 from sqlalchemy.types import BOOLEAN
@@ -18,17 +16,26 @@ from sqlalchemy.types import REAL
 from sqlalchemy.types import SMALLINT
 from sqlalchemy.types import TEXT
 from sqlalchemy.types import VARCHAR
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import func
+from sqlalchemy.orm import subqueryload
+from sqlalchemy.orm import joinedload
 
+print ("\n--------- " + sys.argv[0] + " ---------\n")
+
+host = os.getenv("MY_HOST")
+user = os.getenv("MY_USER")
+password = os.getenv("MY_PASSWORD")
+db = os.getenv("MY_DB")
+port = os.getenv("MY_PORT")
 
 def creator():
-    return nzpy.connect(user="admin", password="password",host='myhost', port=5480, database="db", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
-engine = create_engine("netezza+nzpy://", creator=creator) #working
+    return nzpy.connect(user=f"{user}", password=f"{password}",host=f"{host}", port=int(port), database=f"{db}", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator) 
 
-
-from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
-
-from sqlalchemy.orm import relationship
 
 class Customer(Base):
    __tablename__ = 'CUSTOMER'
@@ -56,7 +63,6 @@ Base.metadata.create_all(engine)
 c1 = Customer(id=2, name = "Gopal Krishna", address = "Bank Street Hydarebad", email = "gk@gmail.com")
 c1.INVOICE = [Invoice(id=3, invno = 10, amount = 15000), Invoice(id=4, invno = 14, amount = 3850)]
 
-from sqlalchemy.orm import sessionmaker
 Session = sessionmaker(bind = engine)
 session = Session()
 session.add(c1)
@@ -104,7 +110,6 @@ for row in result:
    for inv in row.INVOICE:
       print (row.id, row.name, inv.invno, inv.amount)
 
-from sqlalchemy.sql import func
 stmt = session.query(
    Invoice.custid, func.count('*').label('invoice_count')
 ).group_by(Invoice.custid).subquery()
@@ -120,17 +125,10 @@ s = session.query(Invoice).filter(Invoice.invno.contains([3,4,5]))
 
 s = session.query(Customer).filter(Customer.INVOICE.any(Invoice.invno==11))
 
-from sqlalchemy.orm import subqueryload
 c1 = session.query(Customer).options(subqueryload(Customer.INVOICE)).filter_by(name = 'Govind Pant').one()
-
-from sqlalchemy.orm import joinedload
-#c1 = session.query(Customer).options(joinedload(Customer.INVOICE)).filter_by(name='Govind Pant').one()
-
 
 x = session.query(Customer).get(2)
 session.delete(x)
 
 session.query(Invoice).filter(Invoice.invno.in_([10,14])).count()
 print (Invoice.custid.foreign_keys)
-
-#print (Invoice.get_table_comment())

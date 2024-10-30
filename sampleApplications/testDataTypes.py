@@ -1,19 +1,21 @@
+import os
 import sys
 import urllib
 import nzpy
+import nzalchemy as nz
+from sqlalchemy import create_engine, MetaData, Table, Column, text
 
 print ("\n--------- " + sys.argv[0] + " ---------\n")
-from sqlalchemy import create_engine, MetaData, Table, Column, text
-'''
-import pg8000
-from sqlalchemy.dialects import postgresql as ps
-engine = create_engine("postgres+pg8000://postgres@localhost:5432/db1", echo=True) #working
-'''
-import nzalchemy as nz
+
+host = os.getenv("MY_HOST")
+user = os.getenv("MY_USER")
+password = os.getenv("MY_PASSWORD")
+db = os.getenv("MY_DB")
+port = os.getenv("MY_PORT")
 
 def creator():
-    return nzpy.connect(user="admin", password="password",host='host', port=5480, database="db", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
-engine = create_engine("netezza+nzpy://", creator=creator, echo=True)
+    return nzpy.connect(user=f"{user}", password=f"{password}",host=f"{host}", port=int(port), database=f"{db}", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator)
 print (engine)
 
 meta = MetaData()
@@ -60,7 +62,7 @@ Column("NZ_TIME",nz.TIME),
 Column("NZ_VARBINARY",nz.VARBINARY(20)),
 Column("NZ_ST_GEOMETRY",nz.ST_GEOMETRY(20)),
 
-Column("NZ_INTERVAL", nz.INTERVAL), #Error while retriving even empty #ODBC SQL type 110 is not yet supported
+Column("NZ_INTERVAL", nz.INTERVAL),
 
 )
 meta.drop_all(engine)
@@ -103,56 +105,17 @@ NZ_NUMERIC10_2= 34 ,
 NZ_DATE= '1991-1-1',
 NZ_TIMESTAMP= '2016-11-11 03:59:08.8642',
 NZ_DATETIME= '2016-11-11 03:59:08.8642',
-#NZ_TIMETZ= '12:57:42 AEST',  #Error while inserting with AEST
-NZ_TIMETZ= '12:57:42+05:30',  #Expects in +/- hh:mm format
+NZ_TIMETZ= '12:57:42+05:30',
 NZ_TIME= '12:19:23',
 NZ_VARBINARY= '68656c6c6f'.encode('utf-8'),
 NZ_ST_GEOMETRY= '68656c6c6f'.encode('utf-8'),
-NZ_INTERVAL= '1y4mon3d23:34:57.232', #Doesn't allow ='1y4mon3d23h34m67s234565ms'
+NZ_INTERVAL= '1y4mon3d23:34:57.232',
 
 ))
-'''
-TEST = Table(
-   'TESTDT', meta,
-Column("NZ_INTERVAL",nz.INTERVAL)
-)
-meta.drop_all(engine);
-meta.create_all(engine);
-conn = engine.connect()
-conn.execute(TEST.insert().values(
-NZ_INTERVAL='1y4mon3d23:34:57.232'))
-'''
-# result = conn.execute(TEST.select())
+
 result = conn.execute(text("SELECT * FROM TESTDT"))
 for row in result:
     print (row)
-
-'''
-#On_update
-from sqlalchemy.dialects.postgresql import insert
-stmt=insert(TEST).values(NZ_INT=123).on_conflict_do_nothing(index_elements=['NZ_INT'])
-
-# stmt = insert(my_table).values(id='some_id', data='inserted value')
-#    stmt = stmt.on_conflict_do_nothing(index_elements=['id'])
-conn.execute(stmt)
-
-
-stmt = insert(TEST).values(
-        NZ_INT=123,
-        NZ_CHAR='e',
-        NZ_INT4=12 
-) 
-
-result = conn.execute(TEST.select().with_hint(TEST, 'ONLY', 'nz'))
-
-on_update_stmt = stmt.on_conflict_do_update(
-        index_elements=['NZ_INT'],
-        set_=dict(NZ_CHAR='u', NZ_INT4=stmt.excluded.NZ_INT4)
-#        where=(TEST.c.NZ_INT1 == 1)
-        )
-conn.execute(on_update_stmt)
-
-'''
 
 from sqlalchemy import inspect
 inspector = inspect(engine)
