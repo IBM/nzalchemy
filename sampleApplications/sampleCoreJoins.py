@@ -1,20 +1,28 @@
+import os
 import sys
-import urllib
 import nzpy
 from datetime import datetime
+from sqlalchemy import create_engine, MetaData, Table, Integer, String, Column, DateTime, ForeignKey
+from sqlalchemy import select
+from sqlalchemy import join
+from sqlalchemy import and_
+from sqlalchemy import union, union_all, except_, intersect
+from sqlalchemy.sql import select
+from sqlalchemy.types import CHAR
+from sqlalchemy.types import VARCHAR
+
 
 print ("\n--------- " + sys.argv[0] + " ---------\n")
 
-from sqlalchemy import create_engine, MetaData, Table, Integer, String, Column, DateTime, ForeignKey
-from sqlalchemy.types import CHAR
-from sqlalchemy.types import VARCHAR
-from sqlalchemy import select
-
+host = os.getenv("MY_HOST")
+user = os.getenv("MY_USER")
+password = os.getenv("MY_PASSWORD")
+db = os.getenv("MY_DB")
+port = os.getenv("MY_PORT")
 
 def creator():
-    return nzpy.connect(user="admin", password="password",host='myhost', port=5480, database="mydb", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
-
-engine = create_engine("netezza+nzpy://", creator=creator, echo=True)
+    return nzpy.connect(user=f"{user}", password=f"{password}",host=f"{host}", port=int(port), database=f"{db}", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator) 
 print (engine)
 
 meta = MetaData()
@@ -58,36 +66,32 @@ conn.execute(addresses.insert(), [
    {'id':5,'st_id':17, 'postal_add':'Cannought Place new Delhi', 'email_add':'admin@khanna.com'},
 ])
 
-s = select([students])
+s = select(students)
 result = conn.execute(s)
 print ("students")
 for row in result:
     print (row)
 
 print ("addresses")
-s = select([addresses]).distinct()
+s = select(addresses).distinct()
 result = conn.execute(s)
 for row in result:
     print (row)
 
-from sqlalchemy import join
-from sqlalchemy.sql import select
-
-# SELECT "STUDENTS".id, "STUDENTS".name, "STUDENTS".lastname FROM "STUDENTS" JOIN "ADDRESSES" ON "STUDENTS".id = "ADDRESSES".st_id
+print("->1")
 j = students.join(addresses, students.c.id == addresses.c.st_id)
-stmt = select([students]).select_from(j)
+stmt = select(students).select_from(j)
 result = conn.execute(stmt)
 for row in result:
     print (row)
 
-# SELECT "ADDRESSES".id, "ADDRESSES".st_id, "ADDRESSES".postal_add, "ADDRESSES".email_add FROM "STUDENTS" JOIN "ADDRESSES" ON "STUDENTS".id = "ADDRESSES".st_id
-stmt = select([addresses]).select_from(j)
+print("->2")
+stmt = select(addresses).select_from(j)
 result = conn.execute(stmt)
 for row in result:
     print (row)
 
-
-# UPDATE "STUDENTS" SET name='xyz' FROM "ADDRESSES" WHERE "STUDENTS".id = "ADDRESSES".id
+print("->3")
 stmt = students.update().\
    values(name = 'xyz').\
    where(students.c.id == addresses.c.id)
@@ -96,56 +100,32 @@ result = conn.execute(students.select())
 for res in result:
     print (res)
 
-# DELETE FROM "STUDENTS" WHERE "STUDENTS".id = "ADDRESSES".st_id AND ("ADDRESSES".email_add LIKE ? || 'admin%')
+print("->4")
 stmt = students.delete().\
    where(students.c.id == addresses.c.st_id).\
    where(addresses.c.email_add.startswith('admin%'))
-conn.execute(stmt) #delete_extra_from_clause
+conn.execute(stmt)
 result = conn.execute(students.select())
 for res in result:
     print (res)
 
-# SELECT "STUDENTS".id, "STUDENTS".name, "STUDENTS".lastname FROM "STUDENTS" WHERE "STUDENTS".name = ? AND "STUDENTS".id < ?
-from sqlalchemy import and_
-stmt = select([students]).where(and_(students.c.name == 'Ravi', students.c.id <3))
+print("->5")
+stmt = select(students).where(and_(students.c.name == 'Ravi', students.c.id <3))
 conn.execute(stmt)
 
-# UNION
-# SELECT "ADDRESSES".id, "ADDRESSES".st_id, "ADDRESSES".postal_add, "ADDRESSES".email_add FROM "ADDRESSES" 
-# WHERE "ADDRESSES".email_add LIKE ? UNION SELECT "ADDRESSES".id, "ADDRESSES".st_id, "ADDRESSES".postal_add, "ADDRESSES".email_add
-# FROM "ADDRESSES" WHERE "ADDRESSES".email_add LIKE ?
-from sqlalchemy import union, union_all, except_, intersect
 u = union(addresses.select().where(addresses.c.email_add.like('%@gmail.com')), addresses.select().where(addresses.c.email_add.like('%@yahoo.com')))
 result = conn.execute(u)
 for res in result:
     print (res)
 
-# SELECT "ADDRESSES".id, "ADDRESSES".st_id, "ADDRESSES".postal_add, "ADDRESSES".email_add FROM "ADDRESSES"
-# WHERE "ADDRESSES".email_add LIKE ? UNION ALL SELECT "ADDRESSES".id, "ADDRESSES".st_id, "ADDRESSES".postal_add, "ADDRESSES".email_add
-# FROM "ADDRESSES" WHERE "ADDRESSES".email_add LIKE ?
+print("->6")
 u = union_all(addresses.select().where(addresses.c.email_add.like('%@gmail.com')), addresses.select().where(addresses.c.email_add.like('%@yahoo.com')))
 result = conn.execute(u)
 for res in result:
     print (res)
-    
-# EXCEPT
-# SELECT "ADDRESSES".id, "ADDRESSES".st_id, "ADDRESSES".postal_add, "ADDRESSES".email_add FROM "ADDRESSES"
-# WHERE "ADDRESSES".email_add LIKE ? EXCEPT SELECT "ADDRESSES".id, "ADDRESSES".st_id, "ADDRESSES".postal_add, "ADDRESSES".email_add
-# FROM "ADDRESSES" WHERE "ADDRESSES".email_add LIKE ?
 
+print("->7")
 u = except_(addresses.select().where(addresses.c.email_add.like('%@gmail.com')), addresses.select().where(addresses.c.email_add.like('%@yahoo.com')))
 result = conn.execute(u)
 for res in result:
     print (res)
-    
-# INTERSECT
-# SELECT "ADDRESSES".id, "ADDRESSES".st_id, "ADDRESSES".postal_add, "ADDRESSES".email_add FROM "ADDRESSES"
-# WHERE "ADDRESSES".email_add LIKE ? INTERSECT SELECT "ADDRESSES".id, "ADDRESSES".st_id, "ADDRESSES".postal_add, "ADDRESSES".email_add
-# FROM "ADDRESSES" WHERE "ADDRESSES".email_add LIKE ?
-
-u = intersect(addresses.select().where(addresses.c.email_add.like('%@gmail.com')), addresses.select().where(addresses.c.email_add.like('%@yahoo.com')))
-result = conn.execute(u)
-for res in result:
-    print (res)
-
-meta.drop_all(engine)

@@ -1,11 +1,10 @@
+import os
 import sys
 import urllib
 import datetime
 import nzalchemy as nz
 import csv
-
-print ("\n--------- " + sys.argv[0] + " ---------\n")
-
+import nzpy
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, select, desc,Sequence
 from sqlalchemy.types import BIGINT
 from sqlalchemy.types import BOOLEAN
@@ -19,9 +18,19 @@ from sqlalchemy.types import SMALLINT
 from sqlalchemy.types import TEXT
 from sqlalchemy.types import VARCHAR
 
+print ("\n--------- " + sys.argv[0] + " ---------\n")
 
-##Engine Creation
-engine = create_engine("netezza+nzpy://admin:password@localhost:5480/db1")
+host = os.getenv("MY_HOST")
+user = os.getenv("MY_USER")
+password = os.getenv("MY_PASSWORD")
+db = os.getenv("MY_DB")
+port = os.getenv("MY_PORT")
+
+def creator():
+    return nzpy.connect(user=f"{user}", password=f"{password}",host=f"{host}", port=int(port), database=f"{db}", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator) 
+print (engine)
+
 
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
