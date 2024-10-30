@@ -1,5 +1,11 @@
 import sys
+import urllib
+import datetime
+import nzalchemy as nz
+import nzpy
+
 print ("\n--------- " + sys.argv[0] + " ---------\n")
+
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, select, desc,Sequence
 from sqlalchemy.types import BIGINT
 from sqlalchemy.types import BOOLEAN
@@ -12,33 +18,19 @@ from sqlalchemy.types import REAL
 from sqlalchemy.types import SMALLINT
 from sqlalchemy.types import TEXT
 from sqlalchemy.types import VARCHAR
-#from sqlalchemy import select
-import urllib
-import datetime
-import nzalchemy as nz
-import nzpy
-def creator():
-    return nzpy.connect(user="admin", password="password",host='ayush-nps-server1.fyre.ibm.com', port=5480, database="dev_ayush", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
-engine = create_engine("netezza+nzpy://", creator=creator) #working
-##Engine Creation
-# params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
-# engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)
 
+def creator():
+    return nzpy.connect(user="admin", password="password",host='myhost', port=5480, database="mydb", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator) 
 
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 class Customers(Base):
    __tablename__ = 'CUSTOMERS'
-   
-   #id = Column(Integer, primary_key = True)
    id = Column(nz.SMALLINT, Sequence('USR_ID_SEQ3'), primary_key = True)
-   #id = Column(nz.BIGINT, Sequence('USR_ID_SEQ1'), primary_key = True)
    name = Column(VARCHAR(30))
    address = Column(nz.NVARCHAR(30))
    email = Column(nz.NCHAR(30))
-
-#Base.metadata.drop_all(engine, tables=[Customers.__tablename__],checkfirst=True)
-#Base.metadata.create_all(engine, checkfirst=True)
 
 Customers.__table__.drop(engine, checkfirst=True)
 Customers.__table__.create(engine, checkfirst=True)
@@ -49,7 +41,6 @@ session = Session()
 
 #INSERT
 c1 = Customers(name = 'Ravi Kumar', address = 'Station Road Nanded', email = 'ravi@gmail.com') #Error : without mentioning id,base.py: get_insert_default()
-#c1 = Customers(id = 1 ,name = 'Ravi Kumar', address = 'Station Road Nanded', email = 'ravi@gmail.com')
 session.add(c1)
 session.commit()
 
@@ -105,7 +96,6 @@ for row in result:
    print ("ID:", row.id, "Name: ",row.name, "Address:",row.address, "Email:",row.email)
 
 session.query(Customers).filter(Customers.id == 3).scalar()
-#session.query(Customers).one() #fails as more than 1 row
 
 from sqlalchemy import text
 for cust in session.query(Customers).filter(text("id<3")):

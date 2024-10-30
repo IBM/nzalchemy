@@ -12,8 +12,7 @@ import urllib
 params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
 print(params)
 
-#engine = create_engine("postgres+pg8000://postgres@localhost:5432/db1", echo=True) #working
-engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)
 print (engine)
 
 meta = MetaData()
@@ -40,8 +39,6 @@ meta.drop_all(engine)
 meta.create_all(engine)
 ins = students.insert()
 ins = test.insert()
-#ins = students.insert().values(id = '2', name = 'Ravi', lastname = 'Kapoor')
-#conn.execute(ins)
 
 conn.execute(students.insert(), [
    {'id':13,'name':'Ravi', 'lastname':'Kapoor'},

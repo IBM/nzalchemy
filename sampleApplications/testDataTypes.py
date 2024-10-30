@@ -10,12 +10,10 @@ engine = create_engine("postgres+pg8000://postgres@localhost:5432/db1", echo=Tru
 import nzalchemy as nz
 import urllib
 import nzpy
-# params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
-# print(params)
-# engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+
 def creator():
-    return nzpy.connect(user="admin", password="password",host='ayush-nps-server1.fyre.ibm.com', port=5480, database="dev_ayush", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
-engine = create_engine("netezza+nzpy://", creator=creator, echo=True) #working
+    return nzpy.connect(user="admin", password="password",host='host', port=5480, database="db", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator, echo=True)
 print (engine)
 
 meta = MetaData()
@@ -58,7 +56,6 @@ Column("NZ_TIMESTAMP",nz.TIMESTAMP),
 Column("NZ_DATETIME",nz.DATETIME),
 Column("NZ_TIMETZ",nz.TIMETZ),
 Column("NZ_TIME",nz.TIME),
-#Column("NZ_TIME_TZ",nz.TIME.with.time.zone)), #time with time zone 
 
 Column("NZ_VARBINARY",nz.VARBINARY(20)),
 Column("NZ_ST_GEOMETRY",nz.ST_GEOMETRY(20)),
@@ -129,13 +126,6 @@ NZ_INTERVAL='1y4mon3d23:34:57.232'))
 result = conn.execute(text("SELECT * FROM TESTDT"))
 for row in result:
     print (row)
-
-
-#conn.execute(TEST.insert())
-
-#returning
-#stmt=TEST.insert().returning(TEST.c.NZ_INT, TEST.c.NZ_INT1).values(NZ_INT1=3)
-#conn.execute(stmt)
 
 '''
 #On_update

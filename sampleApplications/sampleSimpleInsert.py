@@ -1,4 +1,8 @@
 import sys
+import urllib
+import datetime
+import csv
+
 print ("\n--------- " + sys.argv[0] + " ---------\n")
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, select, desc,Sequence
 from sqlalchemy.types import BIGINT
@@ -12,11 +16,9 @@ from sqlalchemy.types import REAL
 from sqlalchemy.types import SMALLINT
 from sqlalchemy.types import TEXT
 from sqlalchemy.types import VARCHAR
-import urllib
-import datetime
-import nzalchemy as nz
-import csv
 from sqlalchemy.orm import Session
+import nzalchemy as nz
+
 
 ##Engine Creation
 engine = create_engine("netezza+nzpy://admin:password@localhost:5480/db1")

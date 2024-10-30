@@ -1,12 +1,14 @@
 import sys
-print ("\n--------- " + sys.argv[0] + " ---------\n")
-from sqlalchemy import create_engine, MetaData, Table, Column
-
-import nzalchemy as nz
 import urllib
+
+print ("\n--------- " + sys.argv[0] + " ---------\n")
+
+from sqlalchemy import create_engine, MetaData, Table, Column
+import nzalchemy as nz
+
 params = urllib.parse.quote_plus("DRIVER=NetezzaSQL;SERVER=longpassword1.fyre.ibm.com;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
 print(params)
-engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)
 print (engine)
 
 meta = MetaData()

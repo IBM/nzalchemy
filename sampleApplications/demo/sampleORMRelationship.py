@@ -1,5 +1,10 @@
 import sys
+import urllib
+import datetime
+import nzalchemy as nz
+
 print ("\n--------- " + sys.argv[0] + " ---------\n")
+
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, DateTime, select, desc, ForeignKey
 from sqlalchemy.types import BIGINT
 from sqlalchemy.types import BOOLEAN
@@ -12,15 +17,10 @@ from sqlalchemy.types import REAL
 from sqlalchemy.types import SMALLINT
 from sqlalchemy.types import TEXT
 from sqlalchemy.types import VARCHAR
-#from sqlalchemy import select
-import urllib
-import datetime
-import nzalchemy as nz
 
 ##Engine Creation
 params = urllib.parse.quote_plus("DRIVER=NetezzaSQL;SERVER=longpassword1.fyre.ibm.com;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
 engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)
-
 
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
