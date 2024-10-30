@@ -11,15 +11,12 @@ import nzalchemy as nz
 import urllib
 params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
 print(params)
-engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) 
 print (engine)
 
 meta = MetaData()
 TEST = Table(
    'TESTDT_INTERVAL', meta,
-#Column("NZ_TIMETZ",nz.TIMETZ),
-#Column("NZ_TIME",nz.TIME),
-#Column("NZ_TIME_TZ",nz.TIME.with.time.zone)), #time with time zone 
 Column("NZ_INTERVAL", nz.INTERVAL), #Error while retriving even empty #ODBC SQL type 110 is not yet supported
 
 )
