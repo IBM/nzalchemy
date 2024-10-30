@@ -1,6 +1,12 @@
+import os
 import sys
-print ("\n--------- " + sys.argv[0] + " ---------\n")
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, select, desc
+import urllib
+import datetime
+import nzalchemy as nz
+import nzpy
+from sqlalchemy import literal
+from sqlalchemy import literal_column
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, select, desc, text
 from sqlalchemy.types import BIGINT
 from sqlalchemy.types import BOOLEAN
 from sqlalchemy.types import CHAR
@@ -12,21 +18,20 @@ from sqlalchemy.types import REAL
 from sqlalchemy.types import SMALLINT
 from sqlalchemy.types import TEXT
 from sqlalchemy.types import VARCHAR
-#from sqlalchemy import select
-import urllib
-import datetime
-import nzalchemy as nz
 
-from sqlalchemy import literal_column
-from sqlalchemy import literal
+print ("\n--------- " + sys.argv[0] + " ---------\n")
 
-##Engine Creation
-params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
-engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)
+host = os.getenv("MY_HOST")
+user = os.getenv("MY_USER")
+password = os.getenv("MY_PASSWORD")
+db = os.getenv("MY_DB")
+port = os.getenv("MY_PORT")
 
-##Engine class methods
+def creator():
+    return nzpy.connect(user=f"{user}", password=f"{password}",host=f"{host}", port=int(port), database=f"{db}", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator)
 
-##Metadata, Table Object and its methods
+#Metadata, Table Object and its methods
 meta = MetaData()
 tObj = Table(
    't1', meta,
@@ -35,10 +40,8 @@ tObj = Table(
    Column('gender', nz.NCHAR),
    Column('id2', nz.INT, default=literal_column("2", type_=Integer) + literal(2))
 )
-engine.execute("drop table t1 if exists") 
-#meta.drop_all(engine)
+engine.connect().execute(text("drop table t1 if exists")) 
 meta.create_all(engine)
 
-engine.connect().execute(tObj.insert())
-#engine.connect().execute(tObj.insert().values(gender='2'))
-#engine.connect().execute(tObj.insert().values(id=2))
+engine.connect().execute(tObj.insert().values(id = 1,name='ayush',gender='M'))
+print('after updation')

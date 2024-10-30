@@ -1,5 +1,9 @@
+import os
 import sys
-print ("\n--------- " + sys.argv[0] + " ---------\n")
+import urllib
+import datetime
+import nzalchemy as nz
+import nzpy
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, select, desc,Sequence
 from sqlalchemy.types import BIGINT
 from sqlalchemy.types import BOOLEAN
@@ -12,41 +16,37 @@ from sqlalchemy.types import REAL
 from sqlalchemy.types import SMALLINT
 from sqlalchemy.types import TEXT
 from sqlalchemy.types import VARCHAR
-#from sqlalchemy import select
-import urllib
-import datetime
-import nzalchemy as nz
-
-##Engine Creation
-params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
-engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True)
-
-
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+print ("\n--------- " + sys.argv[0] + " ---------\n")
+
+host = os.getenv("MY_HOST")
+user = os.getenv("MY_USER")
+password = os.getenv("MY_PASSWORD")
+db = os.getenv("MY_DB")
+port = os.getenv("MY_PORT")
+
+def creator():
+    return nzpy.connect(user=f"{user}", password=f"{password}",host=f"{host}", port=int(port), database=f"{db}", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator) 
+
 Base = declarative_base()
 class Customers(Base):
    __tablename__ = 'CUSTOMERS'
-   
-   #id = Column(Integer, primary_key = True)
    id = Column(nz.SMALLINT, Sequence('USR_ID_SEQ3'), primary_key = True)
-   #id = Column(nz.BIGINT, Sequence('USR_ID_SEQ1'), primary_key = True)
    name = Column(VARCHAR(30))
    address = Column(nz.NVARCHAR(30))
    email = Column(nz.NCHAR(30))
 
-#Base.metadata.drop_all(engine, tables=[Customers.__tablename__],checkfirst=True)
-#Base.metadata.create_all(engine, checkfirst=True)
-
 Customers.__table__.drop(engine, checkfirst=True)
 Customers.__table__.create(engine, checkfirst=True)
 
-from sqlalchemy.orm import sessionmaker
 Session = sessionmaker(bind = engine)
 session = Session()
 
 #INSERT
 c1 = Customers(name = 'Ravi Kumar', address = 'Station Road Nanded', email = 'ravi@gmail.com') #Error : without mentioning id,base.py: get_insert_default()
-#c1 = Customers(id = 1 ,name = 'Ravi Kumar', address = 'Station Road Nanded', email = 'ravi@gmail.com')
 session.add(c1)
 session.commit()
 
@@ -57,10 +57,6 @@ session.add_all([
 )
 session.commit()
 
-#SELECT
-#q = session.query(mapped class) #Query object
-#q = Query(mappedClass, session) #same as above
-
 res = session.query(Customers).count()
 print (res)
 
@@ -70,11 +66,9 @@ for row in result:
 
 row = session.query(Customers).get(2)
 print ("Name: ",row.name, "Address:",row.address, "Email:",row.email)
-#row.name = 'Ravi Shrivastava'
-row = session.query(Customers).first() #Error, limit clause issue
+row = session.query(Customers).first()
 print ("Name: ",row.name, "Address:",row.address, "Email:",row.email)
 
-#filter and update
 session.query(Customers).filter(Customers.id != 2).update({Customers.name:"Mr."+Customers.name}, synchronize_session = False)
 
 result = session.query(Customers).filter(Customers.id>2)
@@ -86,7 +80,7 @@ for row in result:
    print ("ID:", row.id, "Name: ",row.name, "Address:",row.address, "Email:",row.email)
 
 from sqlalchemy import literal
-search_string = "asasd" #['ed', 'wendy', 'jack']
+search_string = "asasd"
 result = session.query(Customers).filter(literal(search_string).contains(Customers.name))
 
 from sqlalchemy.sql import func
@@ -102,7 +96,6 @@ for row in result:
    print ("ID:", row.id, "Name: ",row.name, "Address:",row.address, "Email:",row.email)
 
 session.query(Customers).filter(Customers.id == 3).scalar()
-#session.query(Customers).one() #fails as more than 1 row
 
 from sqlalchemy import text
 for cust in session.query(Customers).filter(text("id<3")):
@@ -112,7 +105,5 @@ print (session.query(Customers).column_descriptions)
 
 print (Customers.id.foreign_keys)
 
-
 from sqlalchemy.engine import reflection
 insp = reflection.Inspector.from_engine(engine)
-#print(insp.get_table_comment('CUSTOMERS'))

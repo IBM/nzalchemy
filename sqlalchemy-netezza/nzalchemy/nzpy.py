@@ -1,4 +1,4 @@
-from sqlalchemy import processors
+from . import processors
 from .base import NetezzaExecutionContext, NetezzaDialect, log
 from sqlalchemy import types as sqltypes, util
 import decimal
@@ -48,7 +48,7 @@ class NetezzaDialect_nzpy(NetezzaDialect):
         }
     )
     @classmethod
-    def dbapi(cls):
+    def import_dbapi(cls):
         return __import__("nzpy")
     
     def create_connect_args(self, url):
