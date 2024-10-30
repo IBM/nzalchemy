@@ -1,4 +1,7 @@
 import sys
+import urllib
+import nzpy
+
 print ("\n--------- " + sys.argv[0] + " ---------\n")
 from sqlalchemy import create_engine, MetaData, Table, Column, text
 '''
@@ -6,10 +9,7 @@ import pg8000
 from sqlalchemy.dialects import postgresql as ps
 engine = create_engine("postgres+pg8000://postgres@localhost:5432/db1", echo=True) #working
 '''
-
 import nzalchemy as nz
-import urllib
-import nzpy
 
 def creator():
     return nzpy.connect(user="admin", password="password",host='host', port=5480, database="db", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')

@@ -1,6 +1,8 @@
 import sys
 print ("\n--------- " + sys.argv[0] + " ---------\n")
 import pg8000
+import urllib
+import datetime
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime
 from sqlalchemy.types import BIGINT
 from sqlalchemy.types import BOOLEAN
@@ -14,8 +16,6 @@ from sqlalchemy.types import SMALLINT
 from sqlalchemy.types import TEXT
 from sqlalchemy.types import VARCHAR
 
-import urllib
-import datetime
 params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
 print(params)
 
