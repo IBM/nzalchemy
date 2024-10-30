@@ -1,13 +1,12 @@
+import os
 import sys
 import urllib
 import datetime
 import nzalchemy as nz
 import nzpy
-
-print ("\n--------- " + sys.argv[0] + " ---------\n")
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, select, desc, text
-from sqlalchemy import literal_column
 from sqlalchemy import literal
+from sqlalchemy import literal_column
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, select, desc, text
 from sqlalchemy.types import BIGINT
 from sqlalchemy.types import BOOLEAN
 from sqlalchemy.types import CHAR
@@ -20,14 +19,19 @@ from sqlalchemy.types import SMALLINT
 from sqlalchemy.types import TEXT
 from sqlalchemy.types import VARCHAR
 
+print ("\n--------- " + sys.argv[0] + " ---------\n")
+
+host = os.getenv("MY_HOST")
+user = os.getenv("MY_USER")
+password = os.getenv("MY_PASSWORD")
+db = os.getenv("MY_DB")
+port = os.getenv("MY_PORT")
 
 def creator():
-    return nzpy.connect(user="admin", password="password",host='host', port=5480, database="db", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
-engine = create_engine("netezza+nzpy://", creator=creator,echo=True)
+    return nzpy.connect(user=f"{user}", password=f"{password}",host=f"{host}", port=int(port), database=f"{db}", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator)
 
-##Engine class methods
-
-##Metadata, Table Object and its methods
+#Metadata, Table Object and its methods
 meta = MetaData()
 tObj = Table(
    't1', meta,

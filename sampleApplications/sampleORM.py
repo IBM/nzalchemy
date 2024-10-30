@@ -1,11 +1,9 @@
+import os
 import sys
 import urllib
 import datetime
 import nzalchemy as nz
 import nzpy
-
-print ("\n--------- " + sys.argv[0] + " ---------\n")
-
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, select, desc,Sequence
 from sqlalchemy.types import BIGINT
 from sqlalchemy.types import BOOLEAN
@@ -18,12 +16,21 @@ from sqlalchemy.types import REAL
 from sqlalchemy.types import SMALLINT
 from sqlalchemy.types import TEXT
 from sqlalchemy.types import VARCHAR
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+print ("\n--------- " + sys.argv[0] + " ---------\n")
+
+host = os.getenv("MY_HOST")
+user = os.getenv("MY_USER")
+password = os.getenv("MY_PASSWORD")
+db = os.getenv("MY_DB")
+port = os.getenv("MY_PORT")
 
 def creator():
-    return nzpy.connect(user="admin", password="password",host='myhost', port=5480, database="mydb", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+    return nzpy.connect(user=f"{user}", password=f"{password}",host=f"{host}", port=int(port), database=f"{db}", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
 engine = create_engine("netezza+nzpy://", creator=creator) 
 
-from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 class Customers(Base):
    __tablename__ = 'CUSTOMERS'
@@ -35,7 +42,6 @@ class Customers(Base):
 Customers.__table__.drop(engine, checkfirst=True)
 Customers.__table__.create(engine, checkfirst=True)
 
-from sqlalchemy.orm import sessionmaker
 Session = sessionmaker(bind = engine)
 session = Session()
 
@@ -51,10 +57,6 @@ session.add_all([
 )
 session.commit()
 
-#SELECT
-#q = session.query(mapped class) #Query object
-#q = Query(mappedClass, session) #same as above
-
 res = session.query(Customers).count()
 print (res)
 
@@ -64,11 +66,9 @@ for row in result:
 
 row = session.query(Customers).get(2)
 print ("Name: ",row.name, "Address:",row.address, "Email:",row.email)
-#row.name = 'Ravi Shrivastava'
-row = session.query(Customers).first() #Error, limit clause issue
+row = session.query(Customers).first()
 print ("Name: ",row.name, "Address:",row.address, "Email:",row.email)
 
-#filter and update
 session.query(Customers).filter(Customers.id != 2).update({Customers.name:"Mr."+Customers.name}, synchronize_session = False)
 
 result = session.query(Customers).filter(Customers.id>2)
@@ -80,7 +80,7 @@ for row in result:
    print ("ID:", row.id, "Name: ",row.name, "Address:",row.address, "Email:",row.email)
 
 from sqlalchemy import literal
-search_string = "asasd" #['ed', 'wendy', 'jack']
+search_string = "asasd"
 result = session.query(Customers).filter(literal(search_string).contains(Customers.name))
 
 from sqlalchemy.sql import func
@@ -105,7 +105,5 @@ print (session.query(Customers).column_descriptions)
 
 print (Customers.id.foreign_keys)
 
-
 from sqlalchemy.engine import reflection
 insp = reflection.Inspector.from_engine(engine)
-#print(insp.get_table_comment('CUSTOMERS'))
