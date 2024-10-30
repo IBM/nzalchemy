@@ -1,6 +1,8 @@
 import sys
 print ("\n--------- " + sys.argv[0] + " ---------\n")
 import pg8000
+import urllib
+import datetime
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, select, desc, DistributeOn
 from sqlalchemy.types import BIGINT
 from sqlalchemy.types import BOOLEAN
@@ -13,9 +15,6 @@ from sqlalchemy.types import REAL
 from sqlalchemy.types import SMALLINT
 from sqlalchemy.types import TEXT
 from sqlalchemy.types import VARCHAR
-#from sqlalchemy import select
-import urllib
-import datetime
 import nzalchemy as nz
 params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
 print(params)
@@ -46,8 +45,6 @@ meta.create_all(engine)
 conn = engine.connect()
 conn.execute(TEST.insert().values(id='3',name='j', gender='M'))
 
-#meta.drop_all(engine)
-#conn.execute(TEST.delete())
 col = Column('name')
 col2 = Column('gender')
 s = select([TEST])#.where(col=='jack1')
@@ -55,8 +52,6 @@ result = conn.execute(s)
 for row in result:
     print (row)
 
-#s = select([TEST]).where(col=='jack1').order_by(desc(col2)).limit(10)
-#s = select([TEST]).where(col=='jack1').order_by(col2).limit(10)
 s = select([TEST]).where(col=='jack1')#.limit(10)
 result = conn.execute(s)
 for row in result:

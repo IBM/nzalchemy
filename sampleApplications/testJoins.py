@@ -2,12 +2,12 @@ import sys
 print ("\n--------- " + sys.argv[0] + " ---------\n")
 #!/usr/bin/env python3
 import pg8000
-from sqlalchemy import create_engine, MetaData, Table, Integer, String, Column, DateTime, ForeignKey
+import urllib
 from datetime import datetime
+from sqlalchemy import select
+from sqlalchemy import create_engine, MetaData, Table, Integer, String, Column, DateTime, ForeignKey
 from sqlalchemy.types import CHAR
 from sqlalchemy.types import VARCHAR
-from sqlalchemy import select
-import urllib
 
 params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
 print(params)

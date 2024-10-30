@@ -1,15 +1,14 @@
 import sys
+import urllib
+import nzpy
 print ("\n--------- " + sys.argv[0] + " ---------\n")
 #!/usr/bin/env python3
 from sqlalchemy import create_engine, MetaData, Table, Column, select
 import nzalchemy as nz
-import urllib
-import nzpy
-# params = urllib.parse.quote_plus("DRIVER=/nzscratch/spawar72/SQLAlchemy/ODBC/lib64/libnzodbc.so;SERVER=172.16.34.147;PORT=5480;DATABASE=TESTODBC;UID=admin;PWD=password")
-# engine = create_engine("netezza+pyodbc:///?odbc_connect=%s" % params,  echo=True) #working
+
 def creator():
-    return nzpy.connect(user="admin", password="password",host='ayush-nps-server1.fyre.ibm.com', port=5480, database="dev_ayush", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
-engine = create_engine("netezza+nzpy://", creator=creator, echo=True) #working
+    return nzpy.connect(user="admin", password="password",host='myhost', port=5480, database="db", securityLevel=0,logOptions=nzpy.LogOptions.Logfile, char_varchar_encoding='utf8')
+engine = create_engine("netezza+nzpy://", creator=creator, echo=True)
 print (engine)
 
 meta = MetaData()
@@ -23,10 +22,6 @@ meta.create_all(engine)
 
 #conn for insert and select
 conn = engine.connect()
-
-#Insert Method1
-#ins = test.insert().values(id='1',name='jack1', gender='M')
-#result = conn.execute(ins)
 
 #Insert Method2 Multiple Inserts
 conn.execute(test.insert(),[
