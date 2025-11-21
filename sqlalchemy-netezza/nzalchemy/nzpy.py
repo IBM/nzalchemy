@@ -35,7 +35,18 @@ class _netezzaTime_nzpy(sqltypes.Time):
 class NetezzaExecutionContext_nzpy(NetezzaExecutionContext):
     pass
 
+class _netezzaString_nzpy(sqltypes.String):
+    def result_processor(self, dialect, coltype):
+        def process(value):
+            if value is None:
+                return None
+            if isinstance(value, bytes):
+                return value.decode('utf-8')
+            return str(value)
+        return process
+
 class NetezzaDialect_nzpy(NetezzaDialect):
+    supports_statement_cache = True
     execution_ctx_cls = NetezzaExecutionContext_nzpy
     colspecs = util.update_copy(
         NetezzaDialect.colspecs,
@@ -44,13 +55,20 @@ class NetezzaDialect_nzpy(NetezzaDialect):
             sqltypes.TIMESTAMP: _netezzaTimestamp_nzpy,
             sqltypes.Date: _netezzaDate_nzpy, 
             sqltypes.Time: _netezzaTime_nzpy,
-            sqltypes.DateTime: _netezzaDateTime_nzpy
+            sqltypes.DateTime: _netezzaDateTime_nzpy,
+            sqltypes.String: _netezzaString_nzpy,
+            sqltypes.CHAR: _netezzaString_nzpy,
+            sqltypes.VARCHAR: _netezzaString_nzpy
         }
     )
     @classmethod
     def import_dbapi(cls):
         return __import__("nzpy")
-    
+
+    @classmethod
+    def dbapi(cls):
+        return cls.import_dbapi()
+
     def create_connect_args(self, url):
         opts = url.translate_connect_args(username="user")
         opts.update(url.query)

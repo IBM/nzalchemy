@@ -1,8 +1,5 @@
 import os
 import sys
-import logging
-import pg8000
-import urllib
 import nzpy
 from sqlalchemy import create_engine, MetaData, Table, Integer, String, Column, DateTime
 from sqlalchemy.types import CHAR
@@ -58,5 +55,3 @@ s = select(TEST3)
 result = conn.execute(s)
 for row in result:
     print (row)
-
-

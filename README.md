@@ -213,3 +213,92 @@ for row in result:
 ```
 
 [issues]: https://github.com/IBM/repo-template/issues/new
+
+## Apache Superset Integration
+
+nzalchemy can be integrated with Apache Superset to create interactive dashboards and visualizations from your Netezza data.
+
+### Installation
+
+1. **Install Apache Superset**
+   ```bash
+   pip install apache-superset
+   ```
+
+2. **Configure Apache Superset**
+
+	Install PostgreSQL driver (required for Superset's metadata database)
+
+	```python
+	pip install psycopg2-binary
+	```
+
+
+	Fix marshmallow compatibility
+
+	```python
+	pip install 'marshmallow<3.20'
+	```
+
+
+3. **Superset Configuration**
+	Create a superset_config.py file in your working directory with the following content:
+
+	```python
+	import os
+	from superset.config import *
+
+	# Secret key for session management
+	# Generate a secure key: python -c "import secrets; print(secrets.token_urlsafe(32))"
+	SECRET_KEY = 'WAlBWRS0TRY_KbBEoz2GN7yewySwgSHaFaAeSfMHv_'
+
+	# PostgreSQL connection for Superset's metadata database
+	SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/superset'
+	```
+
+	```bash
+	 export SUPERSET_CONFIG_PATH="{project_dir}/superset_config.py"
+	```
+
+	Note: Make sure PostgreSQL is installed and running on your system.
+
+4. **Initialize Superset**
+	Create the Superset database in PostgreSQL
+
+	```bash
+	createdb superset
+	```
+
+
+	Initialize the database schema
+
+	```bash
+	superset db upgrade
+	```
+
+	Create an admin user
+
+	```bash
+	export FLASK_APP=superset
+	superset fab create-admin
+	```
+
+
+	Follow the prompts to set username, first name, last name, email, and password.
+
+	Initialize Superset
+
+	```bash
+	superset init
+	```
+
+
+	Run Superset
+	Start the Superset development server:
+
+	```bash
+	superset run -p 8088 --with-threads --reload --debugger
+	```
+
+
+	Access Superset UI at: http://localhost:8088

@@ -68,22 +68,24 @@ from sqlalchemy.types import TEXT
 def getFileName():
     # Log file created in application directory
     logFile = 'nzalchemy.log'
+    try:
+        from datetime import date
+        today = date.today()
+        # ddmmYY
+        td = today.strftime("%d%m%Y")
+        logFileDay = logFile+td # Everytime log file will be appended to days log file
 
-    from datetime import date
-    today = date.today()
-    # ddmmYY
-    td = today.strftime("%d%m%Y")
-    logFileDay = logFile+td # Everytime log file will be appended to days log file
-
-    import os
-    if os.path.exists(logFile):
-        fin = open(logFile, "r")
-        dat = fin.read()
-        fin.close()
-        fout = open(logFileDay, "a")
-        fout.write(dat)
-        fout.close()
-        os.remove(logFile)
+        import os
+        if os.path.exists(logFile):
+            fin = open(logFile, "r")
+            dat = fin.read()
+            fin.close()
+            fout = open(logFileDay, "a")
+            fout.write(dat)
+            fout.close()
+            os.remove(logFile)
+    except Exception:
+        pass
     return logFile
 
 import logging as log
@@ -752,7 +754,6 @@ class NetezzaDialect(default.DefaultDialect):
     
     name = 'nzdbapi'
     driver = 'netezza'
-    dbapi = ""
 
     supports_alter = True
     max_identifier_length = 63
@@ -802,13 +803,10 @@ class NetezzaDialect(default.DefaultDialect):
 
     reflection_options = ("postgresql_ignore_search_path",)
 
+    supports_statement_cache = True
+
     _backslash_escapes = True
 
-    @classmethod
-    def dbapi(cls):
-        log.debug("-->")
-        import nzalchemy.nzdbapi as module
-        return module
 
     def __init__(
         self,
@@ -1296,4 +1294,3 @@ def visit_create_table_as(element, compiler, **_kwargs):
         distribute = element.distribute_clause(),
     )
     return createStmt + element.organize_clause() 
-
