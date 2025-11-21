@@ -250,7 +250,7 @@ nzalchemy can be integrated with Apache Superset to create interactive dashboard
 
 	# Secret key for session management
 	# Generate a secure key: python -c "import secrets; print(secrets.token_urlsafe(32))"
-	SECRET_KEY = 'WAlBWRS0TRY_KbBEoz2GN7yewySwgSHaFaAeSfMHv_'
+	SECRET_KEY = '{YOUR_SECRET_KEY}'
 
 	# PostgreSQL connection for Superset's metadata database
 	SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/superset'
