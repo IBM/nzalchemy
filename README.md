@@ -262,7 +262,12 @@ nzalchemy can be integrated with Apache Superset to create interactive dashboard
 
 	Note: Make sure PostgreSQL is installed and running on your system.
 
-4. **Initialize Superset**
+4. **Install nzalchemy**
+	```python
+	pip install nzalchemy
+	```
+
+5. **Initialize Superset**
 	Create the Superset database in PostgreSQL
 
 	```bash
